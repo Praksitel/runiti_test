@@ -29,16 +29,40 @@ for my $path (@paths) {
     $paths->{$i}->{key_indexes} = \@key_indexes;
     ++$i;
 }
-my $compared_index;
-for $i (0..$#paths) {
-    if (my (@params) = $url =~ m/$paths->{$i}->{re}/) {
-        $paths->{$i}->{eq} = $url;
-        for my $j (0..$#params) {
-            $paths->{$i}->{params}->{$paths->{$i}->{$paths->{$i}->{key_indexes}->[$j]}} = $params[$j];
+test($url);
+
+$url = "http://";
+test($url);
+
+$url = "http://localhost:8080/api/v1/order/123/raw";
+test($url);
+
+
+sub check {
+    my $url = shift;
+    my $compared_index;
+    for $i (0..$#paths) {
+        if (my (@params) = $url =~ m/$paths->{$i}->{re}/) {
+            $paths->{$i}->{eq} = $url;
+            for my $j (0..$#params) {
+                $paths->{$i}->{params}->{$paths->{$i}->{$paths->{$i}->{key_indexes}->[$j]}} = $params[$j];
+            }
+            $compared_index = $i;
+            last;
         }
-        $compared_index = $i;
-        last;
+    }
+    return $compared_index;
+}
+
+sub test {
+    my $url = shift;
+    my $compared_index = check($url);
+
+    print "\ntest url: $url";
+    if (defined $compared_index) {
+        print "\nCompared index: $compared_index";
+        print "\nCompared params: " . Dumper $paths->{$compared_index};
+    } else {
+        print "\nurl: $url has no match";
     }
 }
-print "\nCompared index: $compared_index";
-print "\nCompared params: " . Dumper $paths->{$compared_index};
