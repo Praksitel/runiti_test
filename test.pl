@@ -34,6 +34,12 @@ test($url);
 $url = "http://";
 test($url);
 
+$url = "/api/v1/order";
+test($url);
+
+$url = "/api/v1/order/pk";
+test($url);
+
 $url = "http://localhost:8080/api/v1/order/123/raw";
 test($url);
 
